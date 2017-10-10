@@ -18,6 +18,8 @@
 		D1F0CFFD1F8C8BEF00333BFF /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1F0CFFC1F8C8BEF00333BFF /* MainViewController.swift */; };
 		D1F0CFFF1F8D446300333BFF /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1F0CFFE1F8D446300333BFF /* UIColor.swift */; };
 		D1F0D0031F8D44C500333BFF /* CGRect.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1F0D0021F8D44C500333BFF /* CGRect.swift */; };
+		D1F0D0051F8D800B00333BFF /* DarkSkyWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1F0D0041F8D800B00333BFF /* DarkSkyWebView.swift */; };
+		D1F0D0071F8D80FF00333BFF /* MainVC+handler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1F0D0061F8D80FF00333BFF /* MainVC+handler.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,6 +57,8 @@
 		D1F0CFFC1F8C8BEF00333BFF /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		D1F0CFFE1F8D446300333BFF /* UIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
 		D1F0D0021F8D44C500333BFF /* CGRect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGRect.swift; sourceTree = "<group>"; };
+		D1F0D0041F8D800B00333BFF /* DarkSkyWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DarkSkyWebView.swift; sourceTree = "<group>"; };
+		D1F0D0061F8D80FF00333BFF /* MainVC+handler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MainVC+handler.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,6 +113,7 @@
 				D11DBC311F8B32670096F11C /* ViewController.swift */,
 				D1F0D0001F8D447000333BFF /* Uitils */,
 				D1F0D0011F8D448200333BFF /* View */,
+				D1F0D0081F8D810900333BFF /* Controller */,
 				D11DBC331F8B32670096F11C /* Main.storyboard */,
 				D11DBC391F8B32670096F11C /* Assets.xcassets */,
 				D11DBC3B1F8B32670096F11C /* LaunchScreen.storyboard */,
@@ -149,8 +154,17 @@
 			isa = PBXGroup;
 			children = (
 				D1F0CFFC1F8C8BEF00333BFF /* MainViewController.swift */,
+				D1F0D0041F8D800B00333BFF /* DarkSkyWebView.swift */,
 			);
 			path = View;
+			sourceTree = "<group>";
+		};
+		D1F0D0081F8D810900333BFF /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				D1F0D0061F8D80FF00333BFF /* MainVC+handler.swift */,
+			);
+			path = Controller;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -291,7 +305,9 @@
 				D1F0D0031F8D44C500333BFF /* CGRect.swift in Sources */,
 				D11DBC321F8B32670096F11C /* ViewController.swift in Sources */,
 				D11DBC301F8B32670096F11C /* AppDelegate.swift in Sources */,
+				D1F0D0051F8D800B00333BFF /* DarkSkyWebView.swift in Sources */,
 				D1F0CFFD1F8C8BEF00333BFF /* MainViewController.swift in Sources */,
+				D1F0D0071F8D80FF00333BFF /* MainVC+handler.swift in Sources */,
 				D1F0CFFF1F8D446300333BFF /* UIColor.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

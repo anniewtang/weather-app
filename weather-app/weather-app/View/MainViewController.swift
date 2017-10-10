@@ -8,8 +8,9 @@
 
 import UIKit
 
-class MainViewController: UIViewController {
+class MainViewController: UIViewController, UIWebViewDelegate  {
     let blue: UIColor = UIColor(hexString: "#6CB6F5")
+    let avenir: UIFont = UIFont(name: "AvenirNext-Regular", size: 40)!
     
     // sun, cloudy, semi-cloudy, rain, lightning
     let weatherIcons = [#imageLiteral(resourceName: "sun"), #imageLiteral(resourceName: "cloudy"), #imageLiteral(resourceName: "semi-cloudy"), #imageLiteral(resourceName: "rain"), #imageLiteral(resourceName: "lightening")]
@@ -29,17 +30,43 @@ class MainViewController: UIViewController {
         super.viewDidLoad()
         
         view.backgroundColor = blue
-        setupTopPortion()
+        setupShapes()
+        setupPoweredBy()
     }
-
-    /* UI: setting up top portion */
-    func setupTopPortion() {
-        setupUICirclesAndBlocks()
-        setupLines()
+    
+    /* UI: setting up Powered By Dark Sky */
+    func setupPoweredBy() {
+        let darkSkyLogo = UIImageView(frame:
+            CGRect(x: 175,
+                   y: 611,
+                   width: 26,
+                   height: 26))
+        darkSkyLogo.image = #imageLiteral(resourceName: "darkskylogo")
+        view.addSubview(darkSkyLogo)
+        
+        let darkSkyLabel = UILabel(frame:
+            CGRect(x: 101,
+                   y: 637,
+                   width: 173,
+                   height: 22))
+        darkSkyLabel.text = "powered by Dark Sky"
+        darkSkyLabel.textAlignment = .center
+        darkSkyLabel.textColor = .white
+        darkSkyLabel.font = avenir
+        darkSkyLabel.font = darkSkyLabel.font.withSize(15)
+        view.addSubview(darkSkyLabel)
+        
+        let darkSkyWebView = UIButton(frame:
+            CGRect(x: 101,
+                   y: 637,
+                   width: 173,
+                   height: 22))
+        darkSkyWebView.addTarget(self, action: #selector(segueToDarkSky), for: .touchUpInside)
+        view.addSubview(darkSkyWebView)
     }
     
     /* UI: setting up main circles */
-    func setupUICirclesAndBlocks() {
+    func setupShapes() {
         let mainCircle = UIView(frame: CGRect(x: 74,
                                               y: 114,
                                               width: 228,
@@ -83,6 +110,16 @@ class MainViewController: UIViewController {
         topRight.layer.backgroundColor = UIColor.white.cgColor
         topRight.clipsToBounds = true
         self.view.addSubview(topRight)
+        
+        let bottomBG = UIView(frame: CGRect(x: 0,
+                                            y: 456,
+                                            width: 375,
+                                            height: 211))
+        bottomBG.layer.backgroundColor = UIColor(hexString: "#7FC1F8").cgColor
+        bottomBG.clipsToBounds = true
+        self.view.addSubview(bottomBG)
+        
+        setupLines()
     }
     
     /* UI: setting up all three lines */
@@ -119,17 +156,15 @@ class MainViewController: UIViewController {
     
     /* UI: setting up main temperature */
     func setupMainTemperature() {
-        let signupTitleLabel = UILabel(frame:
+        hourLabel = UILabel(frame:
             CGRect(x: 59,
                    y: 175,
-                   w: 253,
-                   h: 85))
-        signupTitleLabel.text = "SIGNUP"
-        signupTitleLabel.textAlignment = .center
-        signupTitleLabel.textColor = Constants.blue
-        signupTitleLabel.font = UIFont(name: "HelveticaNeue-BoldItalic", size: 50)
-        signupTitleLabel.layer.borderWidth = 2
-        signupTitleLabel.layer.borderColor = Constants.blue.cgColor
-        view.addSubview(signupTitleLabel)
+                   width: 253,
+                   height: 85))
+        hourLabel.text = "SIGNUP"
+        hourLabel.textAlignment = .center
+        hourLabel.textColor = .white
+        hourLabel.font = UIFont(name: "HelveticaNeue-BoldItalic", size: 50)
+        view.addSubview(hourLabel)
     }
 }
