@@ -18,11 +18,7 @@ class DarkSkyWebView: UIViewController, UIWebViewDelegate {
     }
     
     func setupWebView() {
-        let webView = UIWebView(frame:
-            CGRect(x: 0,
-                   y: 117,
-                   width: 375,
-                   height: 600))
+        let webView = UIWebView(frame: UIScreen.main.bounds)
         webView.delegate = self
         view.addSubview(webView)
         
@@ -43,7 +39,7 @@ class DarkSkyWebView: UIViewController, UIWebViewDelegate {
         self.view.addSubview(backButton)
     }
     
-    func goBack() {
-        // dismiss current screen
+    @objc func goBack() {
+        self.view.removeFromSuperview()
     }
 }

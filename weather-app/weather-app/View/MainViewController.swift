@@ -9,29 +9,51 @@
 import UIKit
 
 class MainViewController: UIViewController, UIWebViewDelegate  {
-    let blue: UIColor = UIColor(hexString: "#6CB6F5")
-    let avenir: UIFont = UIFont(name: "AvenirNext-Regular", size: 40)!
+    // clear, cloudy, rain
+    let weatherIcons: [String: UIImage] = ["clear": #imageLiteral(resourceName: "sun"), "cloudy": #imageLiteral(resourceName: "cloudy"), "rain": #imageLiteral(resourceName: "rain")]
     
-    // sun, cloudy, semi-cloudy, rain, lightning
-    let weatherIcons = [#imageLiteral(resourceName: "sun"), #imageLiteral(resourceName: "cloudy"), #imageLiteral(resourceName: "semi-cloudy"), #imageLiteral(resourceName: "rain"), #imageLiteral(resourceName: "lightening")]
-    
-    var locationLabel: UILabel!
-    
-    var hourLabel: UILabel!
+    /* rain info */
     var minuteLabel: UILabel!
-    var amPMLabel: UILabel!
+    var colonLabel: UILabel!
+    var rainAtLabel: UILabel!
     
+    /* temperature info */
     var tempLabel: UILabel!
+    var farenLabel: UILabel!
     var conditionLabel: UILabel!
     
-    var descLabel: UILabel!
+    /* main info */
+    var locationLabel: UILabel!
+    var mainWeatherIcon: UIImageView!
+    var descriptionTextView: UITextView!
+    
+    /* future weather */
+    var collectionView: UICollectionView!
+    
+    /* data taken from JSON */
+    var rainTime : NSDate!
+    var userLocation : String = "berkeley, ca"
+    var dailySummary : String!
+    var hourlySummary : String!
+    var hourlyTemp : Int = 62
+    var minuteRain: Int!
+    
+    var futureForecasts: [String: Any]!
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = blue
+        view.backgroundColor = Constants.blue
         setupShapes()
         setupPoweredBy()
+        
+        setupLocation()
+        setupMainWeatherIcon()
+        setupMainTemperature()
+        setupRainInfo()
+        setupWeatherDescription()
+        
+        setupFutureWeather()
     }
     
     /* UI: setting up Powered By Dark Sky */
@@ -52,7 +74,7 @@ class MainViewController: UIViewController, UIWebViewDelegate  {
         darkSkyLabel.text = "powered by Dark Sky"
         darkSkyLabel.textAlignment = .center
         darkSkyLabel.textColor = .white
-        darkSkyLabel.font = avenir
+        darkSkyLabel.font = Constants.avenir
         darkSkyLabel.font = darkSkyLabel.font.withSize(15)
         view.addSubview(darkSkyLabel)
         
@@ -81,7 +103,7 @@ class MainViewController: UIViewController, UIWebViewDelegate  {
                                              y: 130,
                                              width: 88,
                                              height: 130))
-        leftBlock.layer.backgroundColor = blue.cgColor
+        leftBlock.layer.backgroundColor = Constants.blue.cgColor
         leftBlock.clipsToBounds = true
         self.view.addSubview(leftBlock)
         
@@ -89,7 +111,7 @@ class MainViewController: UIViewController, UIWebViewDelegate  {
                                               y: 209,
                                               width: 88,
                                               height: 128))
-        rightBlock.layer.backgroundColor = blue.cgColor
+        rightBlock.layer.backgroundColor = Constants.blue.cgColor
         rightBlock.clipsToBounds = true
         self.view.addSubview(rightBlock)
         
@@ -144,7 +166,7 @@ class MainViewController: UIViewController, UIWebViewDelegate  {
                                              y: 455.5,
                                              width: 375,
                                              height: 3))
-        mainLine.layer.borderColor = blue.cgColor
+        mainLine.layer.borderColor = Constants.blue.cgColor
         mainLine.layer.borderWidth = 3
         mainLine.layer.shadowColor = UIColor.black.cgColor
         mainLine.layer.shadowOpacity = 0.4
@@ -153,18 +175,147 @@ class MainViewController: UIViewController, UIWebViewDelegate  {
         mainLine.layer.shouldRasterize = true
         self.view.addSubview(mainLine)
     }
+   
+    /* UI: setting up current location */
+    func setupLocation() {
+        locationLabel = UILabel(frame:
+            CGRect(x: 0,
+                   y: 55,
+                   width: 375,
+                   height: 26))
+        locationLabel.text = userLocation.lowercased()
+        locationLabel.textAlignment = .center
+        locationLabel.textColor = .white
+        locationLabel.font = Constants.avenir
+        locationLabel.font = locationLabel.font.withSize(25)
+        view.addSubview(locationLabel)
+    }
+    
+    /* UI: setting up main weather icon */
+    func setupMainWeatherIcon() {
+        mainWeatherIcon = UIImageView(frame:
+                            CGRect(x: 131,
+                                   y: 180,
+                                   width: 120,
+                                   height: 120))
+        mainWeatherIcon.image = weatherIcons["rain"]
+        self.view.addSubview(mainWeatherIcon)
+        
+    }
     
     /* UI: setting up main temperature */
     func setupMainTemperature() {
-        hourLabel = UILabel(frame:
-            CGRect(x: 59,
-                   y: 175,
-                   width: 253,
-                   height: 85))
-        hourLabel.text = "SIGNUP"
-        hourLabel.textAlignment = .center
-        hourLabel.textColor = .white
-        hourLabel.font = UIFont(name: "HelveticaNeue-BoldItalic", size: 50)
-        view.addSubview(hourLabel)
+        tempLabel = UILabel(frame:
+            CGRect(x: 267,
+                   y: 205,
+                   width: 60,
+                   height: 67))
+        tempLabel.text = String(hourlyTemp)
+        tempLabel.textAlignment = .right
+        tempLabel.textColor = .white
+        tempLabel.font = Constants.avenirDemiBold
+        tempLabel.font = tempLabel.font.withSize(49)
+        view.addSubview(tempLabel)
+        
+        farenLabel = UILabel(frame:
+            CGRect(x: 269,
+                   y: 254,
+                   width: 55,
+                   height: 23))
+        farenLabel.text = "°F"
+        farenLabel.textAlignment = .right
+        farenLabel.textColor = .white
+        
+        farenLabel.font = Constants.avenir
+        farenLabel.font = farenLabel.font.withSize(20)
+        view.addSubview(farenLabel)
+    }
+    
+    /* UI: setting up condition for non-rainy days */
+    func setupNonRainCondition() {
+        conditionLabel = UILabel(frame:
+            CGRect(x: 56,
+                   y: 237,
+                   width: 55,
+                   height: 17))
+        conditionLabel.text = "C L E A R"
+        conditionLabel.textAlignment = .left
+        conditionLabel.textColor = .white
+        conditionLabel.font = Constants.avenirMedium
+        conditionLabel.font = conditionLabel.font.withSize(10.5)
+        view.addSubview(conditionLabel)
+    }
+    
+    /* UI: setting up rain info */
+    func setupRainInfo() {
+        minuteLabel = UILabel(frame:
+            CGRect(x: 55,
+                   y: 225,
+                   width: 57,
+                   height: 35))
+        minuteLabel.text = String(minuteRain)
+        minuteLabel.textAlignment = .right
+        minuteLabel.textColor = .white
+        minuteLabel.font = Constants.avenirDemiBold
+        minuteLabel.font = minuteLabel.font.withSize(35)
+        view.addSubview(minuteLabel)
+        
+        colonLabel = UILabel(frame:
+            CGRect(x: 53,
+                   y: 217,
+                   width: 10,
+                   height: 44))
+        colonLabel.text = ":"
+        colonLabel.textAlignment = .right
+        colonLabel.textColor = .white
+        colonLabel.font = Constants.avenirDemiBold
+        colonLabel.font = colonLabel.font.withSize(30)
+        view.addSubview(colonLabel)
+        
+        rainAtLabel = UILabel(frame:
+            CGRect(x: 55,
+                   y: 210,
+                   width: 55,
+                   height: 13))
+        rainAtLabel.text = "R A I N  A T"
+        rainAtLabel.textAlignment = .left
+        rainAtLabel.textColor = .white
+        rainAtLabel.font = Constants.avenirMedium
+        rainAtLabel.font = rainAtLabel.font.withSize(10.5)
+        view.addSubview(rainAtLabel)
+    }
+
+    /* UI: setting up description */
+    func setupWeatherDescription() {
+        descriptionTextView = UITextView(frame:
+            CGRect(x: 55,
+                   y: 363,
+                   width: 266,
+                   height: 70))
+        descriptionTextView.isEditable = false
+        descriptionTextView.text = "Partly cloudy starting this afternoon, continuing until tomorrow morning."
+        descriptionTextView.textAlignment = .center
+        descriptionTextView.textColor = .white
+        descriptionTextView.backgroundColor = Constants.blue
+        descriptionTextView.font = Constants.avenir
+        descriptionTextView.font = descriptionTextView.font?.withSize(15)
+        view.addSubview(descriptionTextView)
+    }
+
+    /* UI: setting up future forecasts */
+    func setupFutureWeather() {
+        let layout = UICollectionViewFlowLayout()
+        layout.minimumLineSpacing = 0
+        layout.minimumInteritemSpacing = 0
+        collectionView = UICollectionView(frame:
+            CGRect(x: 24,
+                   y: UIApplication.shared.statusBarFrame.maxY + view.frame.height * 0.1 + 10,
+                   width: 329,
+                   height: 111), collectionViewLayout: layout)
+        collectionView.register(FutureForecastCollectionCell.self, forCellWithReuseIdentifier: "collectionViewCell")
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        collectionView.backgroundColor = Constants.blue
+        view.addSubview(collectionView)
     }
 }

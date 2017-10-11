@@ -15,6 +15,9 @@
 		D11DBC3D1F8B32670096F11C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D11DBC3B1F8B32670096F11C /* LaunchScreen.storyboard */; };
 		D11DBC481F8B32670096F11C /* weather_appTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D11DBC471F8B32670096F11C /* weather_appTests.swift */; };
 		D11DBC531F8B32670096F11C /* weather_appUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D11DBC521F8B32670096F11C /* weather_appUITests.swift */; };
+		D18EC1BE1F8DCC5A00F883E4 /* FutureForecastCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D18EC1BD1F8DCC5A00F883E4 /* FutureForecastCollectionView.swift */; };
+		D18EC1C01F8DCCBF00F883E4 /* FutureForcastCollectionCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D18EC1BF1F8DCCBF00F883E4 /* FutureForcastCollectionCellView.swift */; };
+		D18EC1C21F8DD15400F883E4 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = D18EC1C11F8DD15400F883E4 /* Constants.swift */; };
 		D1F0CFFD1F8C8BEF00333BFF /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1F0CFFC1F8C8BEF00333BFF /* MainViewController.swift */; };
 		D1F0CFFF1F8D446300333BFF /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1F0CFFE1F8D446300333BFF /* UIColor.swift */; };
 		D1F0D0031F8D44C500333BFF /* CGRect.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1F0D0021F8D44C500333BFF /* CGRect.swift */; };
@@ -54,6 +57,9 @@
 		D11DBC4E1F8B32670096F11C /* weather-appUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "weather-appUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D11DBC521F8B32670096F11C /* weather_appUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = weather_appUITests.swift; sourceTree = "<group>"; };
 		D11DBC541F8B32670096F11C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D18EC1BD1F8DCC5A00F883E4 /* FutureForecastCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FutureForecastCollectionView.swift; sourceTree = "<group>"; };
+		D18EC1BF1F8DCCBF00F883E4 /* FutureForcastCollectionCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FutureForcastCollectionCellView.swift; sourceTree = "<group>"; };
+		D18EC1C11F8DD15400F883E4 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		D1F0CFFC1F8C8BEF00333BFF /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		D1F0CFFE1F8D446300333BFF /* UIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
 		D1F0D0021F8D44C500333BFF /* CGRect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGRect.swift; sourceTree = "<group>"; };
@@ -146,6 +152,7 @@
 			children = (
 				D1F0CFFE1F8D446300333BFF /* UIColor.swift */,
 				D1F0D0021F8D44C500333BFF /* CGRect.swift */,
+				D18EC1C11F8DD15400F883E4 /* Constants.swift */,
 			);
 			path = Uitils;
 			sourceTree = "<group>";
@@ -154,6 +161,8 @@
 			isa = PBXGroup;
 			children = (
 				D1F0CFFC1F8C8BEF00333BFF /* MainViewController.swift */,
+				D18EC1BD1F8DCC5A00F883E4 /* FutureForecastCollectionView.swift */,
+				D18EC1BF1F8DCCBF00F883E4 /* FutureForcastCollectionCellView.swift */,
 				D1F0D0041F8D800B00333BFF /* DarkSkyWebView.swift */,
 			);
 			path = View;
@@ -302,11 +311,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				D11DBC381F8B32670096F11C /* weather_app.xcdatamodeld in Sources */,
+				D18EC1C21F8DD15400F883E4 /* Constants.swift in Sources */,
 				D1F0D0031F8D44C500333BFF /* CGRect.swift in Sources */,
+				D18EC1C01F8DCCBF00F883E4 /* FutureForcastCollectionCellView.swift in Sources */,
 				D11DBC321F8B32670096F11C /* ViewController.swift in Sources */,
 				D11DBC301F8B32670096F11C /* AppDelegate.swift in Sources */,
 				D1F0D0051F8D800B00333BFF /* DarkSkyWebView.swift in Sources */,
 				D1F0CFFD1F8C8BEF00333BFF /* MainViewController.swift in Sources */,
+				D18EC1BE1F8DCC5A00F883E4 /* FutureForecastCollectionView.swift in Sources */,
 				D1F0D0071F8D80FF00333BFF /* MainVC+handler.swift in Sources */,
 				D1F0CFFF1F8D446300333BFF /* UIColor.swift in Sources */,
 			);
