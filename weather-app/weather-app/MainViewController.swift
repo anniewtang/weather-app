@@ -7,10 +7,11 @@
 //
 
 import UIKit
+import Foundation
+import Alamofire
+import CoreLocation
 
 class MainViewController: UIViewController, UIWebViewDelegate  {
-    // clear, cloudy, rain
-    let weatherIcons: [String: UIImage] = ["clear": #imageLiteral(resourceName: "sun"), "cloudy": #imageLiteral(resourceName: "cloudy"), "rain": #imageLiteral(resourceName: "rain")]
     
     /* rain info */
     var minuteLabel: UILabel!
@@ -23,37 +24,38 @@ class MainViewController: UIViewController, UIWebViewDelegate  {
     var conditionLabel: UILabel!
     
     /* main info */
-    var locationLabel: UILabel!
+    var titleLabel: UILabel!
     var mainWeatherIcon: UIImageView!
     var descriptionTextView: UITextView!
     
-    /* future weather */
-    var collectionView: UICollectionView!
+    /*Create API call functions*/
+    //API Key
+    let apiKey: String = "295a15b47e1a3e4649c5f43bfa41a17e"
     
-    /* data taken from JSON */
+    //Create the location manager
+    let locationManager = CLLocationManager()
+    
+    //User current latitude and longitude
+    var latitude : CLLocationDegrees!
+    var longitude : CLLocationDegrees!
+    
+    //JSON response
+    var jsonResponse : NSDictionary!
     var rainTime : NSDate!
-    var userLocation : String = "berkeley, ca"
     var dailySummary : String!
-    var hourlySummary : String!
-    var hourlyTemp : Int = 62
-    var minuteRain: Int!
-    
-    var futureForecasts: [String: Any]!
+    var hourlyTemp : Double!
+    var minuteRain : Int!
+    var conditionDesc: String!
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
         view.backgroundColor = Constants.blue
-        setupShapes()
-        setupPoweredBy()
         
         setupLocation()
-        setupMainWeatherIcon()
-        setupMainTemperature()
-        setupRainInfo()
-        setupWeatherDescription()
-        
-        setupFutureWeather()
+        let notifKey = "com.test.specialNotificationKey"
+        NotificationCenter.default.addObserver(self, selector: #selector(setupLocation), name: NSNotification.Name(rawValue: notifKey), object: nil)
+
     }
     
     /* UI: setting up Powered By Dark Sky */
@@ -87,10 +89,15 @@ class MainViewController: UIViewController, UIWebViewDelegate  {
         view.addSubview(darkSkyWebView)
     }
     
+    @objc func segueToDarkSky() {
+        performSegue(withIdentifier: "segueToWebView", sender: self)
+    }
+
+    
     /* UI: setting up main circles */
     func setupShapes() {
         let mainCircle = UIView(frame: CGRect(x: 74,
-                                              y: 114,
+                                              y: 67 + 114,
                                               width: 228,
                                               height: 228))
         mainCircle.layer.cornerRadius = 114
@@ -100,7 +107,7 @@ class MainViewController: UIViewController, UIWebViewDelegate  {
         self.view.addSubview(mainCircle)
         
         let leftBlock = UIView(frame: CGRect(x: 74,
-                                             y: 130,
+                                             y: 67 + 130,
                                              width: 88,
                                              height: 130))
         leftBlock.layer.backgroundColor = Constants.blue.cgColor
@@ -108,7 +115,7 @@ class MainViewController: UIViewController, UIWebViewDelegate  {
         self.view.addSubview(leftBlock)
         
         let rightBlock = UIView(frame: CGRect(x: 225,
-                                              y: 209,
+                                              y: 67 + 209,
                                               width: 88,
                                               height: 128))
         rightBlock.layer.backgroundColor = Constants.blue.cgColor
@@ -116,7 +123,7 @@ class MainViewController: UIViewController, UIWebViewDelegate  {
         self.view.addSubview(rightBlock)
         
         let topLeft = UIView(frame: CGRect(x: 121,
-                                              y: 118,
+                                              y: 67 + 118,
                                               width: 25,
                                               height: 25))
         topLeft.layer.cornerRadius = 12.5
@@ -125,7 +132,7 @@ class MainViewController: UIViewController, UIWebViewDelegate  {
         self.view.addSubview(topLeft)
         
         let topRight = UIView(frame: CGRect(x: 220,
-                                           y: 317,
+                                           y: 67 + 317,
                                            width: 25,
                                            height: 25))
         topRight.layer.cornerRadius = 12.5
@@ -137,7 +144,7 @@ class MainViewController: UIViewController, UIWebViewDelegate  {
                                             y: 456,
                                             width: 375,
                                             height: 211))
-        bottomBG.layer.backgroundColor = UIColor(hexString: "#7FC1F8").cgColor
+        bottomBG.layer.backgroundColor = Constants.lightBlue.cgColor
         bottomBG.clipsToBounds = true
         self.view.addSubview(bottomBG)
         
@@ -147,7 +154,7 @@ class MainViewController: UIViewController, UIWebViewDelegate  {
     /* UI: setting up all three lines */
     func setupLines() {
         let leftLine = UIView(frame: CGRect(x: 55.5,
-                                            y: 258.5,
+                                            y: 67 + 258.5,
                                             width: 54,
                                             height: 5))
         leftLine.layer.borderColor = UIColor.white.cgColor
@@ -155,7 +162,7 @@ class MainViewController: UIViewController, UIWebViewDelegate  {
         self.view.addSubview(leftLine)
         
         let rightLine = UIView(frame: CGRect(x: 269.5,
-                                            y: 209.5,
+                                            y: 67 + 209.5,
                                             width: 54,
                                             height: 5))
         rightLine.layer.borderColor = UIColor.white.cgColor
@@ -177,55 +184,67 @@ class MainViewController: UIViewController, UIWebViewDelegate  {
     }
    
     /* UI: setting up current location */
-    func setupLocation() {
-        locationLabel = UILabel(frame:
+    @objc func setupTitle() {
+        titleLabel = UILabel(frame:
             CGRect(x: 0,
-                   y: 55,
+                   y: 67 + 55,
                    width: 375,
                    height: 26))
-        locationLabel.text = userLocation.lowercased()
-        locationLabel.textAlignment = .center
-        locationLabel.textColor = .white
-        locationLabel.font = Constants.avenir
-        locationLabel.font = locationLabel.font.withSize(25)
-        view.addSubview(locationLabel)
+        titleLabel.text = "today's weather"
+        titleLabel.textAlignment = .center
+        titleLabel.textColor = .white
+        titleLabel.font = Constants.avenir
+        titleLabel.font = titleLabel.font.withSize(25)
+        view.addSubview(titleLabel)
     }
     
     /* UI: setting up main weather icon */
     func setupMainWeatherIcon() {
         mainWeatherIcon = UIImageView(frame:
                             CGRect(x: 131,
-                                   y: 180,
+                                   y: 57 + 180,
                                    width: 120,
                                    height: 120))
-        mainWeatherIcon.image = weatherIcons["rain"]
+        getMainWeatherImage()
         self.view.addSubview(mainWeatherIcon)
-        
     }
+    
+    func getMainWeatherImage() {
+        switch conditionDesc {
+            case "clear-day":
+                mainWeatherIcon.image = #imageLiteral(resourceName: "sun")
+            case "rain":
+                mainWeatherIcon.image = #imageLiteral(resourceName: "rain")
+            case "cloudy":
+                mainWeatherIcon.image = #imageLiteral(resourceName: "cloudy")
+            default:
+                mainWeatherIcon.image = #imageLiteral(resourceName: "semi-cloudy")
+        }
+    }
+    
     
     /* UI: setting up main temperature */
     func setupMainTemperature() {
         tempLabel = UILabel(frame:
             CGRect(x: 267,
-                   y: 205,
+                   y: 65 + 205,
                    width: 60,
-                   height: 67))
-        tempLabel.text = String(hourlyTemp)
+                   height: 80))
+        tempLabel.text = String(Int(hourlyTemp))
         tempLabel.textAlignment = .right
         tempLabel.textColor = .white
         tempLabel.font = Constants.avenirDemiBold
-        tempLabel.font = tempLabel.font.withSize(49)
+        tempLabel.font = tempLabel.font.withSize(45)
         view.addSubview(tempLabel)
         
         farenLabel = UILabel(frame:
             CGRect(x: 269,
-                   y: 254,
+                   y: 75 + 254,
                    width: 55,
                    height: 23))
         farenLabel.text = "°F"
         farenLabel.textAlignment = .right
         farenLabel.textColor = .white
-        
         farenLabel.font = Constants.avenir
         farenLabel.font = farenLabel.font.withSize(20)
         view.addSubview(farenLabel)
@@ -235,22 +254,34 @@ class MainViewController: UIViewController, UIWebViewDelegate  {
     func setupNonRainCondition() {
         conditionLabel = UILabel(frame:
             CGRect(x: 56,
-                   y: 237,
+                   y: 67 + 237,
                    width: 55,
                    height: 17))
-        conditionLabel.text = "C L E A R"
         conditionLabel.textAlignment = .left
         conditionLabel.textColor = .white
         conditionLabel.font = Constants.avenirMedium
         conditionLabel.font = conditionLabel.font.withSize(10.5)
         view.addSubview(conditionLabel)
+        getConditionLabelText()
+    }
+    
+    
+    func getConditionLabelText() {
+        switch conditionDesc {
+            case "clear-day":
+                conditionLabel.text = "C L E A R"
+            case "cloudy":
+                conditionLabel.text = "C L O U D Y"
+            default:
+                conditionLabel.removeFromSuperview()
+        }
     }
     
     /* UI: setting up rain info */
     func setupRainInfo() {
         minuteLabel = UILabel(frame:
             CGRect(x: 55,
-                   y: 225,
+                   y: 67 + 225,
                    width: 57,
                    height: 35))
         minuteLabel.text = String(minuteRain)
@@ -262,7 +293,7 @@ class MainViewController: UIViewController, UIWebViewDelegate  {
         
         colonLabel = UILabel(frame:
             CGRect(x: 53,
-                   y: 217,
+                   y: 67 + 217,
                    width: 10,
                    height: 44))
         colonLabel.text = ":"
@@ -274,7 +305,7 @@ class MainViewController: UIViewController, UIWebViewDelegate  {
         
         rainAtLabel = UILabel(frame:
             CGRect(x: 55,
-                   y: 210,
+                   y: 67 + 210,
                    width: 55,
                    height: 13))
         rainAtLabel.text = "R A I N  A T"
@@ -288,34 +319,105 @@ class MainViewController: UIViewController, UIWebViewDelegate  {
     /* UI: setting up description */
     func setupWeatherDescription() {
         descriptionTextView = UITextView(frame:
-            CGRect(x: 55,
-                   y: 363,
-                   width: 266,
-                   height: 70))
+            CGRect(x: 49,
+                   y: 499,
+                   width: 285,
+                   height: 89))
         descriptionTextView.isEditable = false
-        descriptionTextView.text = "Partly cloudy starting this afternoon, continuing until tomorrow morning."
+        descriptionTextView.text = dailySummary
         descriptionTextView.textAlignment = .center
         descriptionTextView.textColor = .white
-        descriptionTextView.backgroundColor = Constants.blue
+        descriptionTextView.backgroundColor = Constants.lightBlue
         descriptionTextView.font = Constants.avenir
-        descriptionTextView.font = descriptionTextView.font?.withSize(15)
+        descriptionTextView.font = descriptionTextView.font?.withSize(20)
+        
         view.addSubview(descriptionTextView)
     }
+    
+    
+    @objc func setupLocation() {
+        // Ask for Authorisation from the User.
+        self.locationManager.requestAlwaysAuthorization()
+        
+        // For use in foreground
+        self.locationManager.requestWhenInUseAuthorization()
+        
+        if CLLocationManager.locationServicesEnabled() {
+            locationManager.delegate = self
+            locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+            locationManager.startUpdatingLocation()
+        }
+        
+    }
+    
+    //Get the weather using AlamoFire
+    func getWeather() {
+        print("Request: https://api.darksky.net/forecast/\(apiKey)/\(latitude!),\(longitude!)")
+        Alamofire.request("https://api.darksky.net/forecast/\(apiKey)/\(latitude!),\(longitude!)").responseJSON { (response) in
+            if let status = response.response?.statusCode {
+                switch(status){
+                case 200:
+                    print("API Connection Success")
+                    self.jsonResponse = response.result.value as! NSDictionary
+                    
+                    //Call JSON cleaner and update variables needed
+                    self.jsonProcessing()
+                default:
+                    print("error with response status: \(status)")
+                    return
+                }
+            }
+        }
+        
+        
+    }
+    
+    //JSON cleaner and variable updated
+    func jsonProcessing() {
+        dailySummary = ((((jsonResponse.object(forKey: "daily") as! NSDictionary).object(forKey: "data") as! NSArray)[0] as! NSDictionary).object(forKey: "summary")) as! String
+        
+        hourlyTemp = ((((jsonResponse.object(forKey: "hourly") as! NSDictionary).object(forKey: "data") as! NSArray)[0] as! NSDictionary).object(forKey: "temperature")) as! Double
+        
+        conditionDesc = (jsonResponse.object(forKey: "daily") as! NSDictionary).object(forKey: "icon") as! String
+        print(conditionDesc)
+        
+        //Parse the object for the minute that rain starts
+        let minuteData = (jsonResponse.object(forKey: "minutely") as! NSDictionary).object(forKey: "data") as! NSArray
+        for i in minuteData {
+            if ((i as! NSDictionary).object(forKey: "precipProbability") as! Float) > 0.4 {
+                let time = (i as! NSDictionary).object(forKey: "time") as! Double
+                rainTime = NSDate(timeIntervalSince1970: time)
+                minuteRain = (Calendar.current.component(.minute, from: rainTime as Date))
+            }
+        }
+        setupUI()
+    }
+    
+    //Setup UI with JSON Values parsed
+    func setupUI(){
+        setupShapes()
+        setupPoweredBy()
+        
+        setupTitle()
+        setupMainWeatherIcon()
+        setupMainTemperature()
+        if rainTime != nil {
+            setupRainInfo()
+        } else {
+            setupNonRainCondition()
+        }
+        setupWeatherDescription()
+    }
+}
 
-    /* UI: setting up future forecasts */
-    func setupFutureWeather() {
-        let layout = UICollectionViewFlowLayout()
-        layout.minimumLineSpacing = 0
-        layout.minimumInteritemSpacing = 0
-        collectionView = UICollectionView(frame:
-            CGRect(x: 24,
-                   y: UIApplication.shared.statusBarFrame.maxY + view.frame.height * 0.1 + 10,
-                   width: 329,
-                   height: 111), collectionViewLayout: layout)
-        collectionView.register(FutureForecastCollectionCell.self, forCellWithReuseIdentifier: "collectionViewCell")
-        collectionView.delegate = self
-        collectionView.dataSource = self
-        collectionView.backgroundColor = Constants.blue
-        view.addSubview(collectionView)
+extension MainViewController: CLLocationManagerDelegate {
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        let locValue:CLLocationCoordinate2D = manager.location!.coordinate
+        print("locations = \(locValue.latitude) \(locValue.longitude)")
+        latitude = locValue.latitude
+        longitude = locValue.longitude
+        
+        //If user location changes update the weather location
+        getWeather()
     }
 }

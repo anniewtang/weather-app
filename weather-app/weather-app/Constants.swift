@@ -10,6 +10,7 @@ import UIKit
 
 struct Constants {
     static let blue: UIColor = UIColor(hexString: "#6CB6F5")
+    static let lightBlue: UIColor = UIColor(hexString: "#7FC1F8")
     static let avenir: UIFont = UIFont(name: "AvenirNext-Regular", size: 40)!
     static let avenirMedium: UIFont = UIFont(name: "AvenirNext-Medium", size: 40)!
     static let avenirDemiBold: UIFont = UIFont(name: "AvenirNext-DemiBold", size: 40)!
