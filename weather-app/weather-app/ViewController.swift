@@ -31,6 +31,8 @@ class ViewController: UIViewController {
     var dailySummary : String!
     var hourlySummary : String!
     var hourlyTemp : Double!
+    var minuteRain : Int!
+    var weekArray : NSArray!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -51,6 +53,7 @@ class ViewController: UIViewController {
             locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
             locationManager.startUpdatingLocation()
         }
+        
     }
     
     //Get the weather using AlamoFire
@@ -77,14 +80,37 @@ class ViewController: UIViewController {
     
     //JSON cleaner and variable updated
     func jsonProcessing(){
+        //Pull the weeks information from the Json response
+        weekArray = (jsonResponse.object(forKey: "daily") as! NSDictionary).object(forKey: "data") as! NSArray
+        
+        //You can access the next seven days using weekArray
+        print(weekArray[0])
+        
+        //If you want the name of the day of that particular day you can do this
+        let day = NSDate(timeIntervalSince1970: ((weekArray[0] as! NSDictionary).object(forKey: "time") as! Double))
+        let dayName = Calendar.current.component(.day, from: day as Date)
+        print(dayName)
+        
+        //If you want the temperature of that particular day or anything else then you first convert weekArray[0] to
+        //a NSDictionary by weekArray[0] as! NSDictionary and then you can get attributes using
+        //(weekArray[0] as! NSDictionary).object(forKey: "temperatureMin") as! Double and you can replace the key with
+        //any key value in the JSON object. You can see all keys by running print((weekArray[0] as! NSDictionary).allKeys)
+        print((weekArray[0] as! NSDictionary).allKeys)
+        /*print(weekArray[1])
+        print(weekArray[2])
+        print(weekArray[3])
+        print(weekArray[4])
+        print(weekArray[5])*/
+        
         hourlySummary = ((((jsonResponse.object(forKey: "hourly") as! NSDictionary).object(forKey: "data") as! NSArray)[0] as! NSDictionary).object(forKey: "summary")) as! String
-        print(hourlySummary)
+        //print(hourlySummary)
+        
         
         hourlyTemp = ((((jsonResponse.object(forKey: "hourly") as! NSDictionary).object(forKey: "data") as! NSArray)[0] as! NSDictionary).object(forKey: "temperature")) as! Double
-        print(hourlyTemp)
+        //print(hourlyTemp)
         
         dailySummary = (jsonResponse.object(forKey: "daily") as! NSDictionary).object(forKey: "summary") as! String
-        print(dailySummary)
+        //print(dailySummary)
         
         //Parse the object for the minute that rain starts
         let minuteData = (jsonResponse.object(forKey: "minutely") as! NSDictionary).object(forKey: "data") as! NSArray
@@ -93,6 +119,7 @@ class ViewController: UIViewController {
             if ((i as! NSDictionary).object(forKey: "precipProbability") as! Float) > 0.4 {
                 let time = (i as! NSDictionary).object(forKey: "time") as! Double
                 rainTime = NSDate(timeIntervalSince1970: time)
+                minuteRain = (Calendar.current.component(.minute, from: rainTime as Date))
                 setupUI()
             }
         }
