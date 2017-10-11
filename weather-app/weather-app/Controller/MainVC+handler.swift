@@ -12,7 +12,8 @@ import Alamofire
 import CoreLocation
 
 extension MainViewController: CLLocationManagerDelegate {    
-    func setupLocation(){
+    
+    @objc func setupLocation() {
         // Ask for Authorisation from the User.
         self.locationManager.requestAlwaysAuthorization()
         
@@ -50,18 +51,13 @@ extension MainViewController: CLLocationManagerDelegate {
     }
     
     //JSON cleaner and variable updated
-    func jsonProcessing() {        
-        //If you want the name of the day of that particular day you can do this
-        let day = NSDate(timeIntervalSince1970: ((weekArray[0] as! NSDictionary).object(forKey: "time") as! Double))
-        let dayName = Calendar.current.component(.day, from: day as Date)
-        
-        hourlySummary = ((((jsonResponse.object(forKey: "hourly") as! NSDictionary).object(forKey: "data") as! NSArray)[0] as! NSDictionary).object(forKey: "summary")) as! String
+    func jsonProcessing() {
+        dailySummary = (jsonResponse.object(forKey: "daily") as! NSDictionary).object(forKey: "summary") as! String 
         
         hourlyTemp = ((((jsonResponse.object(forKey: "hourly") as! NSDictionary).object(forKey: "data") as! NSArray)[0] as! NSDictionary).object(forKey: "temperature")) as! Double
         
-        dailySummary = (jsonResponse.object(forKey: "daily") as! NSDictionary).object(forKey: "summary") as! String
-        
         conditionDesc = (jsonResponse.object(forKey: "daily") as! NSDictionary).object(forKey: "icon") as! String
+        print(conditionDesc)
         
         //Parse the object for the minute that rain starts
         let minuteData = (jsonResponse.object(forKey: "minutely") as! NSDictionary).object(forKey: "data") as! NSArray
@@ -70,9 +66,9 @@ extension MainViewController: CLLocationManagerDelegate {
                 let time = (i as! NSDictionary).object(forKey: "time") as! Double
                 rainTime = NSDate(timeIntervalSince1970: time)
                 minuteRain = (Calendar.current.component(.minute, from: rainTime as Date))
-                setupUI()
             }
         }
+        setupUI()
     }
     
     //Setup UI with JSON Values parsed
@@ -80,10 +76,14 @@ extension MainViewController: CLLocationManagerDelegate {
         setupShapes()
         setupPoweredBy()
         
-        setupLocation()
+        setupTitle()
         setupMainWeatherIcon()
         setupMainTemperature()
-        setupRainInfo()
+        if rainTime != nil {
+            setupRainInfo()
+        } else {
+            setupNonRainCondition()
+        }
         setupWeatherDescription()
     }
     
@@ -96,4 +96,6 @@ extension MainViewController: CLLocationManagerDelegate {
         //If user location changes update the weather location
         getWeather()
     }
+
 }
+

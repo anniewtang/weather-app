@@ -11,7 +11,6 @@
 		1DCEA4D29F2BC41CF5AE1A70 /* Pods_weather_app.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D1B15EE4CE33A011E1FAD008 /* Pods_weather_app.framework */; };
 		5527A0ADA863CD2C4F4E8982 /* Pods_weather_appTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1288D9F6FF8C4C6305EEE37E /* Pods_weather_appTests.framework */; };
 		D11DBC301F8B32670096F11C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D11DBC2F1F8B32670096F11C /* AppDelegate.swift */; };
-		D11DBC321F8B32670096F11C /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D11DBC311F8B32670096F11C /* ViewController.swift */; };
 		D11DBC351F8B32670096F11C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D11DBC331F8B32670096F11C /* Main.storyboard */; };
 		D11DBC381F8B32670096F11C /* weather_app.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = D11DBC361F8B32670096F11C /* weather_app.xcdatamodeld */; };
 		D11DBC3A1F8B32670096F11C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D11DBC391F8B32670096F11C /* Assets.xcassets */; };
@@ -23,6 +22,7 @@
 		D18EC1CE1F8DE83600F883E4 /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D18EC1CB1F8DE83600F883E4 /* UIColor.swift */; };
 		D18EC1CF1F8DE83600F883E4 /* CGRect.swift in Sources */ = {isa = PBXBuildFile; fileRef = D18EC1CC1F8DE83600F883E4 /* CGRect.swift */; };
 		D18EC1D01F8DE83600F883E4 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = D18EC1CD1F8DE83600F883E4 /* Constants.swift */; };
+		D1BC499B1F8E689F0073EA58 /* MainVC+handler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D18EC1C41F8DDF3C00F883E4 /* MainVC+handler.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -52,7 +52,6 @@
 		C1187341F53C625D0FF4906B /* Pods_weather_appUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_weather_appUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D11DBC2C1F8B32670096F11C /* weather-app.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "weather-app.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D11DBC2F1F8B32670096F11C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		D11DBC311F8B32670096F11C /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		D11DBC341F8B32670096F11C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		D11DBC371F8B32670096F11C /* weather_app.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = weather_app.xcdatamodel; sourceTree = "<group>"; };
 		D11DBC391F8B32670096F11C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -151,13 +150,9 @@
 			isa = PBXGroup;
 			children = (
 				D11DBC2F1F8B32670096F11C /* AppDelegate.swift */,
-				D11DBC311F8B32670096F11C /* ViewController.swift */,
-				D18EC1CC1F8DE83600F883E4 /* CGRect.swift */,
-				D18EC1CD1F8DE83600F883E4 /* Constants.swift */,
-				D18EC1CB1F8DE83600F883E4 /* UIColor.swift */,
-				D18EC1C81F8DE82C00F883E4 /* DarkSkyWebView.swift */,
-				D18EC1C71F8DE82C00F883E4 /* MainViewController.swift */,
-				D18EC1C31F8DDF3C00F883E4 /* Controller */,
+				D1BC499E1F8E68DB0073EA58 /* Utils */,
+				D1BC499D1F8E68C50073EA58 /* Views */,
+				D1BC499C1F8E68BA0073EA58 /* Controller */,
 				D11DBC331F8B32670096F11C /* Main.storyboard */,
 				D11DBC391F8B32670096F11C /* Assets.xcassets */,
 				D11DBC3B1F8B32670096F11C /* LaunchScreen.storyboard */,
@@ -185,12 +180,31 @@
 			path = "weather-appUITests";
 			sourceTree = "<group>";
 		};
-		D18EC1C31F8DDF3C00F883E4 /* Controller */ = {
+		D1BC499C1F8E68BA0073EA58 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
 				D18EC1C41F8DDF3C00F883E4 /* MainVC+handler.swift */,
 			);
 			path = Controller;
+			sourceTree = "<group>";
+		};
+		D1BC499D1F8E68C50073EA58 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				D18EC1C81F8DE82C00F883E4 /* DarkSkyWebView.swift */,
+				D18EC1C71F8DE82C00F883E4 /* MainViewController.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		D1BC499E1F8E68DB0073EA58 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				D18EC1CC1F8DE83600F883E4 /* CGRect.swift */,
+				D18EC1CD1F8DE83600F883E4 /* Constants.swift */,
+				D18EC1CB1F8DE83600F883E4 /* UIColor.swift */,
+			);
+			path = Utils;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -486,9 +500,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D1BC499B1F8E689F0073EA58 /* MainVC+handler.swift in Sources */,
 				D11DBC381F8B32670096F11C /* weather_app.xcdatamodeld in Sources */,
 				D18EC1CE1F8DE83600F883E4 /* UIColor.swift in Sources */,
-				D11DBC321F8B32670096F11C /* ViewController.swift in Sources */,
 				D18EC1CA1F8DE82C00F883E4 /* DarkSkyWebView.swift in Sources */,
 				D11DBC301F8B32670096F11C /* AppDelegate.swift in Sources */,
 				D18EC1C91F8DE82C00F883E4 /* MainViewController.swift in Sources */,
