@@ -14,4 +14,5 @@ struct Constants {
     static let avenir: UIFont = UIFont(name: "AvenirNext-Regular", size: 40)!
     static let avenirMedium: UIFont = UIFont(name: "AvenirNext-Medium", size: 40)!
     static let avenirDemiBold: UIFont = UIFont(name: "AvenirNext-DemiBold", size: 40)!
+    static let avenirBold: UIFont = UIFont(name: "AvenirNext-Bold", size: 40)!
 }

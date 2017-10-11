@@ -257,10 +257,10 @@ class MainViewController: UIViewController, UIWebViewDelegate  {
                    y: 67 + 237,
                    width: 55,
                    height: 17))
-        conditionLabel.textAlignment = .left
+        conditionLabel.textAlignment = .center
         conditionLabel.textColor = .white
-        conditionLabel.font = Constants.avenirMedium
-        conditionLabel.font = conditionLabel.font.withSize(10.5)
+        conditionLabel.font = Constants.avenirBold
+        conditionLabel.font = conditionLabel.font.withSize(12)
         view.addSubview(conditionLabel)
         getConditionLabelText()
     }
